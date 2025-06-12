@@ -166,17 +166,17 @@ const Agenda: React.FC = () => {
 
   const handleEnviar = () => {
     alert(
-      `Informações enviadas com sucesso para os pais do aluno "${alunoSelecionado?.nome}" na data ${dataSelecionada}!`
+      `Informações enviadas com sucesso para os mentores de "${alunoSelecionado?.nome}" na data ${dataSelecionada}!`
     );
   };
 
   return (
     <div className="mb-12 min-h-screen bg-gray-100 flex flex-col items-center p-6">
-      <h1 className="text-3xl font-bold mb-6 text-blue-500">Detalhes do Aluno</h1>
+      <h1 className="text-3xl font-bold mb-6 text-blue-500">O que eu fiz hoje?</h1>
 
       <div className="w-full max-w-xl bg-white rounded-xl shadow-md p-6">
         <label htmlFor="aluno" className="block text-sm font-medium mb-2">
-          Selecione o aluno
+          Selecione o filho(a)
         </label>
         <select
           id="aluno"
@@ -185,7 +185,7 @@ const Agenda: React.FC = () => {
           defaultValue=""
         >
           <option value="" disabled>
-            Escolha um aluno
+            Escolha um filho(a)
           </option>
           {alunos.map((aluno) => (
             <option key={aluno.nome} value={aluno.nome}>

@@ -12,7 +12,7 @@ const Home: React.FC = () => {
   const user: User = {
     name: "João da Silva",
     description:
-      "Monitor(a), responsável por auxiliar nas atividades e na rotina dos pequenos.",
+      "Resposável",
     photoUrl: userPhoto, // substitua pela URL real
   };
 
@@ -24,12 +24,12 @@ const Home: React.FC = () => {
     navigate("/agenda");
   };
 
-  const handleActivityClick = () => {
-    navigate("/cadastro-atividades");
+  const handleCamClick = () => {
+    navigate("/monitoramento");
   };
 
-  const handleDataClick = () => {
-    navigate("/cadastro-aluno");
+  const handleChatClick = () => {
+    navigate("/chat");
   };
 
   return (
@@ -56,16 +56,16 @@ const Home: React.FC = () => {
           Agenda
         </button>
         <button
-          onClick={handleDataClick}
+          onClick={handleChatClick}
           className="w-full bg-[#fdf5e6] text-blue-600 border border-blue-600 py-3 rounded-lg font-medium hover:bg-purple-700 transition"
         >
-          Cadastrar de Alunos
+          Chat
         </button>
         <button
-          onClick={handleActivityClick}
+          onClick={handleCamClick}
           className="w-full bg-[#fdf5e6] text-blue-600 border border-blue-600 py-3 rounded-lg font-medium hover:bg-green-700 transition"
         >
-          Cadastrar de Dados
+          Câmeras
         </button>
       </div>
     </div>
