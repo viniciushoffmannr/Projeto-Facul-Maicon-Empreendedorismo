@@ -126,6 +126,7 @@ const Login = () => {
         "Já existem alunos cadastrados. Nenhuma alteração foi feita."
       );
     }
+
     const atividadesExistem = localStorage.getItem("atividades");
     if (!atividadesExistem) {
       localStorage.setItem(
@@ -187,7 +188,7 @@ const Login = () => {
         <div className="mb-4">
           <label
             htmlFor="username"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-base font-medium text-gray-700 mb-1"
           >
             Usuário
           </label>
@@ -197,7 +198,7 @@ const Login = () => {
             type="text"
             value={form.username}
             onChange={handleChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
             placeholder="Digite seu usuário"
             required
           />
@@ -206,7 +207,7 @@ const Login = () => {
         <div className="mb-6">
           <label
             htmlFor="password"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-base font-medium text-gray-700 mb-1"
           >
             Senha
           </label>
@@ -216,7 +217,7 @@ const Login = () => {
             type="password"
             value={form.password}
             onChange={handleChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
             placeholder="Digite sua senha"
             required
           />
