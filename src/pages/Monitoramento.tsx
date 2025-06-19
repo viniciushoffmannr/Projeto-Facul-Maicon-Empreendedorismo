@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Camera as CameraIcon, X as CloseIcon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import craincVideo from '../assets/crianc.mp4'
 
 const SecurityCameraVideo: React.FC<{ src: string }> = ({ src }) => {
   const [time, setTime] = useState(new Date());
@@ -59,10 +58,6 @@ const Monitoramento: React.FC = () => {
 
   const cameras = [1, 2, 3, 4];
 
-  // Vídeo simulado para todas as câmeras (você pode trocar cada URL se quiser)
-const cameraVideoUrl = craincVideo
-
-
   return (
     <div className="relative flex flex-col min-h-screen bg-blue-50 p-4 pt-6">
       {/* Grade de câmeras */}
@@ -105,7 +100,7 @@ const cameraVideoUrl = craincVideo
               </button>
               <h2 className="text-gray-800 text-lg mb-3 font-semibold">{`Câmera ${selectedCamera}`}</h2>
 
-              <SecurityCameraVideo src={cameraVideoUrl} />
+              <SecurityCameraVideo src="/videos/crianc.mp4" />
             </motion.div>
           </motion.div>
         )}
