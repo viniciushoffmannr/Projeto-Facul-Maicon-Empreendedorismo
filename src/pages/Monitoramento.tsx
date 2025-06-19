@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 
-const Monitoramento = () => {
-  const [messages, setMessages] = useState<string[]>([]);
+const Chat = () => {
+  const [messages, setMessages] = useState<
+    { text: string; sender: "outro" | "eu" }[]
+  >([{ text: "Olá, tudo bem?", sender: "outro" }]);
+
   const [input, setInput] = useState("");
 
   const handleSend = () => {
     const trimmed = input.trim();
     if (trimmed) {
-      setMessages((prev) => [...prev, trimmed]);
+      setMessages((prev) => [...prev, { text: trimmed, sender: "eu" }]);
       setInput("");
     }
   };
@@ -21,10 +24,10 @@ const Monitoramento = () => {
   return (
     <div className="mt-10 px-4">
       <div className="flex flex-col flex-grow border border-gray-300 rounded-lg bg-white shadow-md p-4 max-w-xl mx-auto">
-        {/* Título opcional */}
-        <h2 className="text-2xl font-semibold text-blue-500 text-center mb-4">Chat</h2>
+        <h2 className="text-2xl font-semibold text-blue-500 text-center mb-4">
+          Chat
+        </h2>
 
-        {/* Área de mensagens */}
         <div className="flex-grow overflow-y-auto mb-4 max-h-72">
           {messages.length === 0 ? (
             <p className="text-gray-400 italic text-center mt-8">
@@ -34,15 +37,18 @@ const Monitoramento = () => {
             messages.map((msg, idx) => (
               <div
                 key={idx}
-                className="bg-blue-100 text-blue-900 rounded-lg px-3 py-2 mb-2 max-w-[80%] break-words"
+                className={`px-4 py-2 mb-2 max-w-[80%] rounded-lg break-words ${
+                  msg.sender === "eu"
+                    ? "bg-gray-100 text-gray-800 self-start"
+                    : "bg-blue-500 text-white ml-auto"
+                }`}
               >
-                {msg}
+                {msg.text}
               </div>
             ))
           )}
         </div>
 
-        {/* Campo de digitação */}
         <div className="flex gap-2">
           <input
             type="text"
@@ -64,4 +70,4 @@ const Monitoramento = () => {
   );
 };
 
-export default Monitoramento;
+export default Chat;
