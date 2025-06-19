@@ -27,6 +27,21 @@ const calcularIdade = (dataNascimento: string): number => {
 const Agenda: React.FC = () => {
   const [alunos, setAlunos] = useState<Aluno[]>([]);
   const [alunoSelecionado, setAlunoSelecionado] = useState<Aluno | null>(null);
+  const [selecionado, setSelecionado] = useState<{
+    lancheManha: string;
+    almoco: string;
+    lancheTarde: string;
+    xixi: string;
+    coco: string;
+    humor: string;
+    observacao: string;
+  } | null>(null);
+
+  const [dataSelecionada, setDataSelecionada] = useState(
+    new Date().toISOString().split("T")[0]
+  );
+
+  // Armazena todas as atividades para o dropdown (para pegar opções)
   const [atividades, setAtividades] = useState({
     lanchesManha: [] as string[],
     almoços: [] as string[],
@@ -36,24 +51,12 @@ const Agenda: React.FC = () => {
     humor: [] as string[],
   });
 
-  const [selecionado, setSelecionado] = useState({
-    lancheManha: "",
-    almoco: "",
-    lancheTarde: "",
-    xixi: "",
-    coco: "",
-    humor: "",
-    observacao: "",
-  });
-
-  const [dataSelecionada, setDataSelecionada] = useState(
-    new Date().toISOString().split("T")[0]
-  );
-
   useEffect(() => {
     const alunosStorage = localStorage.getItem("alunosCadastro");
     if (alunosStorage) {
-      setAlunos(JSON.parse(alunosStorage));
+      const todosAlunos: Aluno[] = JSON.parse(alunosStorage);
+      // pega só 3 alunos para mostrar
+      setAlunos(todosAlunos.slice(0, 3));
     }
   }, []);
 
@@ -72,103 +75,52 @@ const Agenda: React.FC = () => {
     }
   }, []);
 
+  // Quando aluno ou data mudar, carrega dados da agenda para aquele aluno e data
   useEffect(() => {
-    if (alunoSelecionado) {
-      const agendaStorage = localStorage.getItem("agendaPorAluno");
-      if (agendaStorage) {
-        const parsed = JSON.parse(agendaStorage);
-        const alunoAgenda = parsed[alunoSelecionado.nome]?.[dataSelecionada];
-        if (alunoAgenda) {
-          setSelecionado(alunoAgenda);
-        } else {
-          setSelecionado({
-            lancheManha: "",
-            almoco: "",
-            lancheTarde: "",
-            xixi: "",
-            coco: "",
-            humor: "",
-            observacao: "",
-          });
-        }
-      } else {
-        setSelecionado({
-          lancheManha: "",
-          almoco: "",
-          lancheTarde: "",
-          xixi: "",
-          coco: "",
-          humor: "",
-          observacao: "",
-        });
-      }
+    if (!alunoSelecionado) {
+      setSelecionado(null);
+      return;
+    }
+
+    const agendaStorage = localStorage.getItem("agendaPorAluno");
+    if (!agendaStorage) {
+      setSelecionado(null);
+      return;
+    }
+
+    const parsed = JSON.parse(agendaStorage);
+    const dadosDia = parsed?.[alunoSelecionado.nome]?.[dataSelecionada] || null;
+
+    if (dadosDia) {
+      setSelecionado(dadosDia);
     } else {
-      setSelecionado({
-        lancheManha: "",
-        almoco: "",
-        lancheTarde: "",
-        xixi: "",
-        coco: "",
-        humor: "",
-        observacao: "",
-      });
+      setSelecionado(null);
     }
   }, [alunoSelecionado, dataSelecionada]);
 
-  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const aluno = alunos.find((a) => a.nome === e.target.value) || null;
-    setAlunoSelecionado(aluno);
+  // Para selects só leitura: Remove seta dropdown via CSS inline style
+  const selectReadOnlyStyle: React.CSSProperties = {
+    appearance: "none",
+    WebkitAppearance: "none",
+    MozAppearance: "none",
+    pointerEvents: "none", // bloqueia interação
+    backgroundColor: "#f3f4f6", // cor de fundo semelhante ao input readOnly
+    border: "1px solid #d1d5db",
+    borderRadius: "0.375rem",
+    padding: "0.5rem 0.75rem",
+    width: "100%",
+    color: "#374151",
+    fontSize: "1rem",
   };
 
-  const handleChange = (field: keyof typeof selecionado, value: string) => {
-    const novoSelecionado = { ...selecionado, [field]: value };
-    setSelecionado(novoSelecionado);
-
-    if (!alunoSelecionado) return;
-
-    const agendaStorage = localStorage.getItem("agendaPorAluno");
-    const parsed = agendaStorage ? JSON.parse(agendaStorage) : {};
-
-    if (!parsed[alunoSelecionado.nome]) {
-      parsed[alunoSelecionado.nome] = {};
-    }
-
-    parsed[alunoSelecionado.nome][dataSelecionada] = novoSelecionado;
-    localStorage.setItem("agendaPorAluno", JSON.stringify(parsed));
-  };
-
-  const renderDropdown = (
-    label: string,
-    options: string[],
-    value: string,
-    field: keyof typeof selecionado
-  ) => (
+  const renderSelectReadOnly = (label: string, value: string) => (
     <div className="mb-4">
       <label className="block text-sm font-medium mb-1">{label}</label>
-      <select
-        value={value}
-        onChange={(e) => handleChange(field, e.target.value)}
-        className="w-full border border-gray-300 rounded px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-      >
-        <option value="">Selecione uma opção</option>
-        {options.map((opcao, index) => (
-          <option key={index} value={opcao}>
-            {opcao}
-          </option>
-        ))}
+      <select style={selectReadOnlyStyle} value={value} disabled>
+        <option value={value}>{value || "—"}</option>
       </select>
     </div>
   );
-
-  const temInformacaoPreenchida = Object.entries(selecionado).some(
-    ([key, valor]) => key !== "observacao" && valor && valor.trim() !== ""
-  );
-
-  const handleEnviar = () => {
-    alert(
-      `Informações enviadas com sucesso para os mentores de "${alunoSelecionado?.nome}" na data ${dataSelecionada}!`
-    );
-  };
 
   return (
     <div className="mb-12 min-h-screen bg-gray-100 flex flex-col items-center p-6">
@@ -181,8 +133,11 @@ const Agenda: React.FC = () => {
         <select
           id="aluno"
           className="w-full border border-gray-300 rounded px-4 py-2 mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          onChange={handleSelectChange}
-          defaultValue=""
+          onChange={(e) => {
+            const aluno = alunos.find((a) => a.nome === e.target.value) || null;
+            setAlunoSelecionado(aluno);
+          }}
+          value={alunoSelecionado?.nome || ""}
         >
           <option value="" disabled>
             Escolha um filho(a)
@@ -208,7 +163,7 @@ const Agenda: React.FC = () => {
           />
         </div>
 
-        {alunoSelecionado && (
+        {alunoSelecionado ? (
           <>
             <div className="flex items-center mb-6">
               <div className="w-24 h-24 rounded-full bg-gray-300 flex items-center justify-center mr-4 overflow-hidden">
@@ -300,49 +255,37 @@ const Agenda: React.FC = () => {
               <h3 className="text-xl font-semibold mb-4 text-blue-500">
                 Agenda do Dia ({dataSelecionada})
               </h3>
-              {renderDropdown(
-                "Lanche da manhã",
-                atividades.lanchesManha,
-                selecionado.lancheManha,
-                "lancheManha"
-              )}
-              {renderDropdown("Almoço", atividades.almoços, selecionado.almoco, "almoco")}
-              {renderDropdown(
-                "Lanche da tarde",
-                atividades.lanchesTarde,
-                selecionado.lancheTarde,
-                "lancheTarde"
-              )}
-              {renderDropdown("Número 1 (xixi)", atividades.xixi, selecionado.xixi, "xixi")}
-              {renderDropdown("Número 2 (cocô)", atividades.coco, selecionado.coco, "coco")}
-              {renderDropdown(
-                "Humor",
-                ["Feliz", "Triste", "Estressado", "Sonolento", "Animado"],
-                selecionado.humor,
-                "humor"
-              )}
 
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Observação</label>
-                <textarea
-                  value={selecionado.observacao}
-                  onChange={(e) => handleChange("observacao", e.target.value)}
-                  className="w-full border border-gray-300 rounded px-3 py-2 bg-white resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  rows={3}
-                  placeholder="Digite aqui qualquer observação sobre o aluno..."
-                />
-              </div>
+              {selecionado ? (
+                <>
+                  {renderSelectReadOnly("Lanche da manhã", selecionado.lancheManha)}
+                  {renderSelectReadOnly("Almoço", selecionado.almoco)}
+                  {renderSelectReadOnly("Lanche da tarde", selecionado.lancheTarde)}
+                  {renderSelectReadOnly("Número 1 (xixi)", selecionado.xixi)}
+                  {renderSelectReadOnly("Número 2 (cocô)", selecionado.coco)}
+                  {renderSelectReadOnly("Humor", selecionado.humor)}
 
-              {temInformacaoPreenchida && (
-                <button
-                  onClick={handleEnviar}
-                  className="mt-6 w-full bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg hover:bg-blue-700 transition"
-                >
-                  Enviar Informações
-                </button>
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium mb-1">Observação</label>
+                    <textarea
+                      value={selecionado.observacao}
+                      readOnly
+                      className="w-full border border-gray-300 rounded px-3 py-2 bg-gray-100 resize-none"
+                      rows={3}
+                    />
+                  </div>
+                </>
+              ) : (
+                <p className="text-center text-gray-500 mt-6">
+                  Nenhuma informação registrada para esta data.
+                </p>
               )}
             </div>
           </>
+        ) : (
+          <p className="text-center text-gray-500 mt-6">
+            Selecione um filho(a) para ver as informações.
+          </p>
         )}
       </div>
     </div>
