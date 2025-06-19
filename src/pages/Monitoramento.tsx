@@ -1,40 +1,30 @@
 import React, { useState } from "react";
-import { Camera as CameraIcon } from "lucide-react";
 
-const Monitoramento: React.FC = () => {
+const Monitoramento = () => {
   const [messages, setMessages] = useState<string[]>([]);
   const [input, setInput] = useState("");
 
   const handleSend = () => {
-    if (input.trim() !== "") {
-      setMessages((prev) => [...prev, input.trim()]);
+    const trimmed = input.trim();
+    if (trimmed) {
+      setMessages((prev) => [...prev, trimmed]);
       setInput("");
     }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      e.preventDefault();
       handleSend();
     }
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-blue-50 p-4 pt-6">
-      {/* Câmeras */}
-      <div className="grid grid-cols-2 gap-6 mb-8 justify-center max-w-xl mx-auto">
-        {[1, 2, 3, 4].map((num) => (
-          <div key={num} className="flex flex-col items-center">
-            <div className="w-36 h-28 bg-black rounded-lg flex items-center justify-center shadow-lg border border-gray-700">
-              <CameraIcon size={48} color="white" />
-            </div>
-            <span className="mt-2 font-semibold text-gray-700">{`Câmera ${num}`}</span>
-          </div>
-        ))}
-      </div>
-
-      {/* Chat */}
+    <div className="mt-10 px-4">
       <div className="flex flex-col flex-grow border border-gray-300 rounded-lg bg-white shadow-md p-4 max-w-xl mx-auto">
+        {/* Título opcional */}
+        <h2 className="text-2xl font-semibold text-blue-500 text-center mb-4">Chat</h2>
+
+        {/* Área de mensagens */}
         <div className="flex-grow overflow-y-auto mb-4 max-h-72">
           {messages.length === 0 ? (
             <p className="text-gray-400 italic text-center mt-8">
@@ -52,6 +42,7 @@ const Monitoramento: React.FC = () => {
           )}
         </div>
 
+        {/* Campo de digitação */}
         <div className="flex gap-2">
           <input
             type="text"
@@ -63,15 +54,12 @@ const Monitoramento: React.FC = () => {
           />
           <button
             onClick={handleSend}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 rounded transition"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition"
           >
             Enviar
           </button>
         </div>
       </div>
-
-      {/* Espaço para o footer */}
-      <div className="h-20" />
     </div>
   );
 };

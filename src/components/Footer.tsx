@@ -1,7 +1,7 @@
 import {
   Home as HomeIcon,
   CalendarDays as AgendaIcon,
-  Camera as CameraIcon,
+   MessageCircle as MessageIcon,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -32,8 +32,8 @@ const Footer = () => {
           onClick={() => navigate("/monitoramento")}
           className="flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-blue-600 transition"
         >
-          <CameraIcon size={24} strokeWidth={1.5} />
-          <span className="text-xs mt-1">Monitoramento</span>
+          <MessageIcon size={24} strokeWidth={1.5} />
+          <span className="text-xs mt-1">Chat</span>
         </button>
 
       </div>

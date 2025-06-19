@@ -313,8 +313,8 @@ const Agenda: React.FC = () => {
                 selecionado.lancheTarde,
                 "lancheTarde"
               )}
-              {renderDropdown("Número 1 (xixi)", atividades.xixi, selecionado.xixi, "xixi")}
-              {renderDropdown("Número 2 (cocô)", atividades.coco, selecionado.coco, "coco")}
+              {renderDropdown("Xixi", atividades.xixi, selecionado.xixi, "xixi")}
+              {renderDropdown("Cocô", atividades.coco, selecionado.coco, "coco")}
               {renderDropdown(
                 "Humor",
                 ["Feliz", "Triste", "Estressado", "Sonolento", "Animado"],
