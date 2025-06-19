@@ -25,7 +25,9 @@ const SecurityCameraVideo: React.FC<{ src: string }> = ({ src }) => {
         autoPlay
         loop
         muted
-        className="w-full h-full object-cover filter grayscale contrast-125 brightness-90"
+        playsInline
+        controls={false}
+        className="w-full h-full object-cover filter grayscale contrast-125 brightness-90 touch-none select-none"
       />
 
       {/* Texto "REC" piscando */}
