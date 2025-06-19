@@ -1,30 +1,78 @@
-import React, { useState } from "react";
-import { Camera as CameraIcon } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Camera as CameraIcon, X as CloseIcon } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import craincVideo from '../assets/crianc.mp4'
 
-const Monitoramento: React.FC = () => {
-  const [messages, setMessages] = useState<string[]>([]);
-  const [input, setInput] = useState("");
+const SecurityCameraVideo: React.FC<{ src: string }> = ({ src }) => {
+  const [time, setTime] = useState(new Date());
 
-  const handleSend = () => {
-    if (input.trim() !== "") {
-      setMessages((prev) => [...prev, input.trim()]);
-      setInput("");
-    }
+  useEffect(() => {
+    const interval = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString("pt-BR");
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      handleSend();
-    }
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString("pt-BR");
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-blue-50 p-4 pt-6">
-      {/* Câmeras */}
+    <div className="relative w-full aspect-video rounded-lg overflow-hidden border border-gray-700 bg-black">
+      <video
+        src={src}
+        autoPlay
+        loop
+        muted
+        className="w-full h-full object-cover filter grayscale contrast-125 brightness-90"
+      />
+
+      {/* Texto "REC" piscando */}
+      <div className="absolute top-2 left-2 text-red-600 font-mono text-sm animate-pulse">
+        REC
+      </div>
+
+      {/* Data e hora */}
+      <div className="absolute bottom-2 left-2 text-white font-mono text-xs bg-black bg-opacity-50 rounded px-1">
+        {formatDate(time)} {formatTime(time)}
+      </div>
+
+      {/* Overlay de ruído */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage:
+            "url('https://media.giphy.com/media/xUOxf48wZPXI62DG7y/giphy.gif')",
+          opacity: 0.1,
+          mixBlendMode: "overlay",
+          filter: "grayscale(100%)",
+        }}
+      />
+    </div>
+  );
+};
+
+const Monitoramento: React.FC = () => {
+  const [selectedCamera, setSelectedCamera] = useState<number | null>(null);
+
+  const cameras = [1, 2, 3, 4];
+
+  // Vídeo simulado para todas as câmeras (você pode trocar cada URL se quiser)
+const cameraVideoUrl = craincVideo
+
+
+  return (
+    <div className="relative flex flex-col min-h-screen bg-blue-50 p-4 pt-6">
+      {/* Grade de câmeras */}
       <div className="grid grid-cols-2 gap-6 mb-8 justify-center max-w-xl mx-auto">
-        {[1, 2, 3, 4].map((num) => (
-          <div key={num} className="flex flex-col items-center">
+        {cameras.map((num) => (
+          <div
+            key={num}
+            className="flex flex-col items-center cursor-pointer"
+            onClick={() => setSelectedCamera(num)}
+          >
             <div className="w-36 h-28 bg-black rounded-lg flex items-center justify-center shadow-lg border border-gray-700">
               <CameraIcon size={48} color="white" />
             </div>
@@ -33,44 +81,36 @@ const Monitoramento: React.FC = () => {
         ))}
       </div>
 
-      {/* Chat */}
-      <div className="flex flex-col flex-grow border border-gray-300 rounded-lg bg-white shadow-md p-4 max-w-xl mx-auto">
-        <div className="flex-grow overflow-y-auto mb-4 max-h-72">
-          {messages.length === 0 ? (
-            <p className="text-gray-400 italic text-center mt-8">
-              Nenhuma mensagem ainda...
-            </p>
-          ) : (
-            messages.map((msg, idx) => (
-              <div
-                key={idx}
-                className="bg-blue-100 text-blue-900 rounded-lg px-3 py-2 mb-2 max-w-[80%] break-words"
-              >
-                {msg}
-              </div>
-            ))
-          )}
-        </div>
-
-        <div className="flex gap-2">
-          <input
-            type="text"
-            placeholder="Digite sua mensagem"
-            className="flex-grow border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyPress}
-          />
-          <button
-            onClick={handleSend}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 rounded transition"
+      {/* Visualização da câmera expandida */}
+      <AnimatePresence>
+        {selectedCamera !== null && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-white/60 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
           >
-            Enviar
-          </button>
-        </div>
-      </div>
+            <motion.div
+              className="relative bg-white rounded-xl shadow-2xl p-4 w-[90%] max-w-2xl border border-gray-300"
+              initial={{ scale: 0.85, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <button
+                onClick={() => setSelectedCamera(null)}
+                className="absolute top-2 right-2 text-gray-600 hover:text-red-500"
+              >
+                <CloseIcon size={24} />
+              </button>
+              <h2 className="text-gray-800 text-lg mb-3 font-semibold">{`Câmera ${selectedCamera}`}</h2>
 
-      {/* Espaço para o footer */}
+              <SecurityCameraVideo src={cameraVideoUrl} />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="h-20" />
     </div>
   );
