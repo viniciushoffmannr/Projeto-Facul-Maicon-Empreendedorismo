@@ -41,37 +41,12 @@ const Agenda: React.FC = () => {
     new Date().toISOString().split("T")[0]
   );
 
-  // Armazena todas as atividades para o dropdown (para pegar opções)
-  const [atividades, setAtividades] = useState({
-    lanchesManha: [] as string[],
-    almoços: [] as string[],
-    lanchesTarde: [] as string[],
-    xixi: [] as string[],
-    coco: [] as string[],
-    humor: [] as string[],
-  });
-
   useEffect(() => {
     const alunosStorage = localStorage.getItem("alunosCadastro");
     if (alunosStorage) {
       const todosAlunos: Aluno[] = JSON.parse(alunosStorage);
       // pega só 3 alunos para mostrar
       setAlunos(todosAlunos.slice(0, 3));
-    }
-  }, []);
-
-  useEffect(() => {
-    const dados = localStorage.getItem("atividades");
-    if (dados) {
-      const parsed = JSON.parse(dados);
-      setAtividades({
-        lanchesManha: parsed.lanchesManha || [],
-        almoços: parsed.almoços || [],
-        lanchesTarde: parsed.lanchesTarde || [],
-        xixi: parsed.xixi || [],
-        coco: parsed.coco || [],
-        humor: parsed.humor || [],
-      });
     }
   }, []);
 
@@ -124,7 +99,9 @@ const Agenda: React.FC = () => {
 
   return (
     <div className="mb-12 min-h-screen bg-gray-100 flex flex-col items-center p-6">
-      <h1 className="text-3xl font-bold mb-6 text-blue-500">O que eu fiz hoje?</h1>
+      <h1 className="text-3xl font-bold mb-6 text-blue-500">
+        O que eu fiz hoje?
+      </h1>
 
       <div className="w-full max-w-xl bg-white rounded-xl shadow-md p-6">
         <label htmlFor="aluno" className="block text-sm font-medium mb-2">
@@ -178,7 +155,9 @@ const Agenda: React.FC = () => {
                 />
               </div>
 
-              <h2 className="text-2xl font-semibold">{alunoSelecionado.nome}</h2>
+              <h2 className="text-2xl font-semibold">
+                {alunoSelecionado.nome}
+              </h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -258,15 +237,23 @@ const Agenda: React.FC = () => {
 
               {selecionado ? (
                 <>
-                  {renderSelectReadOnly("Lanche da manhã", selecionado.lancheManha)}
+                  {renderSelectReadOnly(
+                    "Lanche da manhã",
+                    selecionado.lancheManha
+                  )}
                   {renderSelectReadOnly("Almoço", selecionado.almoco)}
-                  {renderSelectReadOnly("Lanche da tarde", selecionado.lancheTarde)}
+                  {renderSelectReadOnly(
+                    "Lanche da tarde",
+                    selecionado.lancheTarde
+                  )}
                   {renderSelectReadOnly("Número 1 (xixi)", selecionado.xixi)}
                   {renderSelectReadOnly("Número 2 (cocô)", selecionado.coco)}
                   {renderSelectReadOnly("Humor", selecionado.humor)}
 
                   <div className="mb-4">
-                    <label className="block text-sm font-medium mb-1">Observação</label>
+                    <label className="block text-sm font-medium mb-1">
+                      Observação
+                    </label>
                     <textarea
                       value={selecionado.observacao}
                       readOnly
